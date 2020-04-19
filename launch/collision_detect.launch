@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Arguments -->
+    <arg name="latInit" default="45.6311926152"/>
+    <arg name="longInit" default="9.2947495255"/>
+    <arg name="h0" default="231.506675163"/>
+
+    <!-- Transformations -->
+    <node pkg="tf" type="static_transform_publisher" name="odom2rgps" args="0 0 0 0 0 0 odom /rgps 10" />
+    <node pkg="tf" type="static_transform_publisher" name="odom2fgps" args="0 0 0 0 0 0 odom /fgps 10" />
+
+    <!-- Lla2Enu Node -->
+    <node name="lla2enu" type="lla2enu" pkg="collision_detect">
+        <param name="latInit" type="double" value="$(arg latInit)"/>
+        <param name="longInit" type="double" value="$(arg longInit)"/>
+        <param name="h0" type="double" value="$(arg h0)"/>
+    </node>
+
+    <!-- launch rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find collision_detect)/rviz/collision_detect.rviz" />
+
+</launch>
