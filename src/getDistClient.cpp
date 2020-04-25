@@ -1,42 +1,8 @@
-// #include "ros/ros.h"
-// #include "collision_detect/GetDist.h"
-// #include <cstdlib>
-
-// int main(int argc, char **argv)
-// {
-//     ros::init(argc, argv, "getDistClient");
-//     if (argc != 7)
-//     {
-//         ROS_INFO("usage: getDistClient Carx Cary Carz Obsx Obsy Obsz");
-//         return 1;
-//     }
-
-//     ros::NodeHandle n;
-//     ros::ServiceClient client = n.serviceClient<collision_detect::GetDist>("getDist");
-//     collision_detect::GetDist srv;
-//     srv.request.carEnu_x = atoll(argv[1]);
-//     srv.request.carEnu_y = atoll(argv[2]);
-//     srv.request.carEnu_z = atoll(argv[3]);
-//     srv.request.obsEnu_x = atoll(argv[4]);
-//     srv.request.obsEnu_y = atoll(argv[5]);
-//     srv.request.obsEnu_z = atoll(argv[6]);
-//     if (client.call(srv))
-//     {
-//         ROS_INFO("Dist: %lf", (float)srv.response.dist);
-//     }
-//     else
-//     {
-//         ROS_ERROR("Failed to call service getDist");
-//         return 1;
-//     }
-
-//     return 0;
-// }
-
 #include <ros/ros.h>
 #include <stdlib.h>
 #include <math.h>
 #include "collision_detect/GetDist.h"
+#include "collision_detect/collisionInfo.h"
 #include <sensor_msgs/NavSatFix.h>
 #include <nav_msgs/Odometry.h>
 #include <message_filters/subscriber.h>
@@ -49,6 +15,7 @@ public:
     Subscribe_And_Publish()
     {
         client = nh.serviceClient<collision_detect::GetDist>("getDist");
+        pubCollisionStatus = nh.advertise<collision_detect::collisionInfo>("/DistStatus", 1);
         subCarEnu.subscribe(nh, "/CarEnu", 1);
         subObsEnu.subscribe(nh, "/ObsEnu", 1);
         sync.reset(new Sync(MySyncPolicy(10), subCarEnu, subObsEnu));
@@ -63,9 +30,26 @@ public:
         srv.request.obsEnu_x = obs->pose.pose.position.x;
         srv.request.obsEnu_y = obs->pose.pose.position.y;
         srv.request.obsEnu_z = obs->pose.pose.position.z;
+
+        collision_detect::collisionInfo collisionStatus;
+
         if (client.call(srv))
         {
             ROS_INFO("Dist: %lf", (float)srv.response.dist);
+            collisionStatus.dist = (float)srv.response.dist;
+            if (collisionStatus.dist > 5)
+            {
+                collisionStatus.flag = "Safe";
+            }
+            else if (collisionStatus.dist > 1 && collisionStatus.dist < 5)
+            {
+                collisionStatus.flag = "Unsafe";
+            }
+            else
+            {
+                collisionStatus.flag = "Crash";
+            }
+            pubCollisionStatus.publish(collisionStatus);
         }
         else
         {
@@ -75,6 +59,7 @@ public:
 
 private:
     ros::NodeHandle nh;
+    ros::Publisher pubCollisionStatus;
     ros::ServiceClient client;
     collision_detect::GetDist srv;
     message_filters::Subscriber<nav_msgs::Odometry> subCarEnu;
