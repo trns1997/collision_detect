@@ -1,0 +1,8 @@
+float32 carEnu_x
+float32 carEnu_y
+float32 carEnu_z
+float32 obsEnu_x
+float32 obsEnu_y
+float32 obsEnu_z
+---
+float32 dist  

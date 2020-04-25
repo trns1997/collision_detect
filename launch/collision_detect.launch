@@ -16,7 +16,13 @@
         <param name="h0" type="double" value="$(arg h0)"/>
     </node>
 
+    <!-- getDistService Node -->
+    <node name="getDistSer" type="getDistSer" pkg="collision_detect"/>
+
+    <!-- getDistClient Node -->
+    <node name="getDistCli" type="getDistCli" pkg="collision_detect" output="screen"/>
+
     <!-- launch rviz -->
-    <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find collision_detect)/rviz/collision_detect.rviz" />
+    <!-- <node name="rviz" pkg="rviz" type="rviz" required="true" args="-d $(find collision_detect)/rviz/collision_detect.rviz" /> -->
 
 </launch>

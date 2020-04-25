@@ -15,11 +15,11 @@ public:
         this->longInit = longInit;
         this->h0 = h0;
 
-        pubCarEnu = nh.advertise<nav_msgs::Odometry>("/CarEnu", 100);
-        pubObsEnu = nh.advertise<nav_msgs::Odometry>("/ObsEnu", 100);
+        pubCarEnu = nh.advertise<nav_msgs::Odometry>("/CarEnu", 1);
+        pubObsEnu = nh.advertise<nav_msgs::Odometry>("/ObsEnu", 1);
 
-        subCarLla = nh.subscribe("/swiftnav/front/gps_pose", 100, &Subscribe_And_Publish::CarCallback, this);
-        subObsLla = nh.subscribe("/swiftnav/obs/gps_pose", 100, &Subscribe_And_Publish::ObsCallback, this);
+        subCarLla = nh.subscribe("/swiftnav/front/gps_pose", 1, &Subscribe_And_Publish::CarCallback, this);
+        subObsLla = nh.subscribe("/swiftnav/obs/gps_pose", 1, &Subscribe_And_Publish::ObsCallback, this);
     }
 
     void CarCallback(const sensor_msgs::NavSatFix::ConstPtr &msg)
@@ -29,65 +29,72 @@ public:
         float longitude = msg->longitude;
         float h = msg->altitude;
 
-        float *enu;
-        enu = lla2enu(latitude, longitude, h);
+        if (latitude != 0 && longitude != 0 && h != 0)
+        {
+            float *enu;
+            enu = lla2enu(latitude, longitude, h);
 
-        nav_msgs::Odometry enuData;
-        tf::TransformBroadcaster car_broadcaster;
+            nav_msgs::Odometry enuData;
+            tf::TransformBroadcaster car_broadcaster;
 
-        //first, we'll publish the transform over tf
-        geometry_msgs::TransformStamped odom_trans;
-        odom_trans.header.stamp = msg->header.stamp;
-        odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = msg->header.frame_id;
-        odom_trans.transform.translation.x = enu[0];
-        odom_trans.transform.translation.y = enu[1];
-        odom_trans.transform.translation.z = enu[2];
-        //send the transform
-        car_broadcaster.sendTransform(odom_trans);
+            //first, we'll publish the transform over tf
+            geometry_msgs::TransformStamped odom_trans;
+            odom_trans.header.stamp = msg->header.stamp;
+            odom_trans.header.frame_id = "odom";
+            odom_trans.child_frame_id = msg->header.frame_id;
+            odom_trans.transform.translation.x = enu[0];
+            odom_trans.transform.translation.y = enu[1];
+            odom_trans.transform.translation.z = enu[2];
+            //send the transform
+            car_broadcaster.sendTransform(odom_trans);
 
-        enuData.header.stamp = msg->header.stamp;
-        enuData.header.frame_id = "odom";
-        enuData.child_frame_id = msg->header.frame_id;
-        enuData.pose.pose.position.x = enu[0];
-        enuData.pose.pose.position.y = enu[1];
-        enuData.pose.pose.position.z = enu[2];
+            enuData.header.stamp = msg->header.stamp;
+            enuData.header.frame_id = "odom";
+            enuData.child_frame_id = msg->header.frame_id;
+            enuData.pose.pose.position.x = enu[0];
+            enuData.pose.pose.position.y = enu[1];
+            enuData.pose.pose.position.z = enu[2];
 
-        pubCarEnu.publish(enuData);
+            pubCarEnu.publish(enuData);
+        }
     }
 
-    void ObsCallback(const sensor_msgs::NavSatFix::ConstPtr &msg)
+    void
+    ObsCallback(const sensor_msgs::NavSatFix::ConstPtr &msg)
     {
         // input data from msg
         float latitude = msg->latitude;
         float longitude = msg->longitude;
         float h = msg->altitude;
 
-        float *enu;
-        enu = lla2enu(latitude, longitude, h);
+        if (latitude != 0 && longitude != 0 && h != 0)
+        {
+            float *enu;
+            enu = lla2enu(latitude, longitude, h);
 
-        nav_msgs::Odometry enuData;
-        tf::TransformBroadcaster obs_broadcaster;
+            nav_msgs::Odometry enuData;
+            tf::TransformBroadcaster obs_broadcaster;
 
-        //first, we'll publish the transform over tf
-        geometry_msgs::TransformStamped odom_trans;
-        odom_trans.header.stamp = msg->header.stamp;
-        odom_trans.header.frame_id = "odom";
-        odom_trans.child_frame_id = msg->header.frame_id;
-        odom_trans.transform.translation.x = enu[0];
-        odom_trans.transform.translation.y = enu[1];
-        odom_trans.transform.translation.z = enu[2];
-        //send the transform
-        obs_broadcaster.sendTransform(odom_trans);
+            //first, we'll publish the transform over tf
+            geometry_msgs::TransformStamped odom_trans;
+            odom_trans.header.stamp = msg->header.stamp;
+            odom_trans.header.frame_id = "odom";
+            odom_trans.child_frame_id = msg->header.frame_id;
+            odom_trans.transform.translation.x = enu[0];
+            odom_trans.transform.translation.y = enu[1];
+            odom_trans.transform.translation.z = enu[2];
+            //send the transform
+            obs_broadcaster.sendTransform(odom_trans);
 
-        enuData.header.stamp = msg->header.stamp;
-        enuData.header.frame_id = "odom";
-        enuData.child_frame_id = msg->header.frame_id;
-        enuData.pose.pose.position.x = enu[0];
-        enuData.pose.pose.position.y = enu[1];
-        enuData.pose.pose.position.z = enu[2];
+            enuData.header.stamp = msg->header.stamp;
+            enuData.header.frame_id = "odom";
+            enuData.child_frame_id = msg->header.frame_id;
+            enuData.pose.pose.position.x = enu[0];
+            enuData.pose.pose.position.y = enu[1];
+            enuData.pose.pose.position.z = enu[2];
 
-        pubObsEnu.publish(enuData);
+            pubObsEnu.publish(enuData);
+        }
     }
 
     float *lla2enu(float latitude, float longitude, float h)
