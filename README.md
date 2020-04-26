@@ -26,5 +26,30 @@ Terminal 3
 ```
 rostopic echo /DistStatus
 ```
-View the following video to see the steps and the result:
-<img src= />
+View the following [video](https://github.com/trns1997/collision_detect/blob/master/media/demoVideo.mp4) to see the steps and the result. But heres the gif version if you are lazy to click the vid:
+<img src= https://github.com/trns1997/collision_detect/blob/master/media/demoVid.gif/>
+
+## Under the Hood
+### Ros Service Structure
+```srv/GetDist.srv```
+```
+float32 carEnu_x
+float32 carEnu_y
+float32 carEnu_z
+float32 obsEnu_x
+float32 obsEnu_y
+float32 obsEnu_z
+---
+float32 dist  
+```
+The service takes **3D Enu coordinates** of the **Car** and the **Obstacle** and as response outputs the **Distance** between the 2 objects.
+
+### Ros Message Structure
+```msg/collisionInfo.msg```
+```
+float32 dist
+string flag
+```
+The custom messasge comprises of the **Distance** between the **Car** and **Obstacle**, And a **Status Flag** that categorizes the distance between the 2 objects as either *Safe* or *Unsafe* or *Crash*.
+
+### Dynamic Reconfigure Gui
