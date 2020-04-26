@@ -12,17 +12,17 @@ roscd collision_detect/
 ```
 
 ## Running the Nodes
-Terminal 1
+*Terminal 1*
 ```
 roslaunch collision_detect collision_detect.launch
 ```
-Terminal 2
+*Terminal 2*
 ```
 rosbag play PATH_TO_CATKIN_WS/src/collision_detect/bag project.bag
 ```
 use `-r` flag to speed up the play speed if you please.
 
-Terminal 3
+*Terminal 3*
 ```
 rostopic echo /DistStatus
 ```
