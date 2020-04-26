@@ -69,3 +69,9 @@ This gui allows you to change the **Min Safety Distace** and the **Max Crash Dis
 rosrun rqt_tf_tree rqt_tf_tree
 ```
 <img src=https://github.com/trns1997/collision_detect/blob/master/media/tf_tree.png>
+
+## Team Members
+* **Thomas Narayana Swamy** - 10709057
+* **Felippe Francesconi** - 10527268
+* **Rudolfo Félix**  - 10732154
+
