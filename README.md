@@ -4,6 +4,7 @@
 ```
 cd PATH_TO_CATKIN_WS/src
 git clone https://github.com/trns1997/collision_detect.git
+cd ..
 caktin_make 
 ```
 Make sure to source the catkin_ws. Check if the `collision_detect` package is properly setup by trying:
