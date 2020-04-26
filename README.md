@@ -2,7 +2,7 @@
 
 ## Getting Started
 ```
-cd PATH_TO_CATKIN_WS
+cd PATH_TO_CATKIN_WS/src
 git clone https://github.com/trns1997/collision_detect.git
 caktin_make 
 ```
