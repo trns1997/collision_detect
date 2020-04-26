@@ -30,6 +30,13 @@ View the following [video](https://github.com/trns1997/collision_detect/blob/mas
 <img src= https://github.com/trns1997/collision_detect/blob/master/media/demoVid.gif/>
 
 ## Under the Hood
+
+### Nodes and Topics
+```
+rosrun rqt_graph rqt_graph
+```
+<img src=https://github.com/trns1997/collision_detect/blob/master/media/rqt_graph.png>
+
 ### Ros Service Structure
 ```srv/GetDist.srv```
 ```
@@ -53,3 +60,11 @@ string flag
 The custom messasge comprises of the **Distance** between the **Car** and **Obstacle**, And a **Status Flag** that categorizes the distance between the 2 objects as either *Safe* or *Unsafe* or *Crash*.
 
 ### Dynamic Reconfigure Gui
+<img src=https://github.com/trns1997/collision_detect/blob/master/media/reconf_gui.png>
+This gui allows you to change the **Min Safety Distace** and the **Max Crash Distance** between the Car and Obstacles.
+
+### Tf Tree
+```
+rosrun rqt_tf_tree rqt_tf_tree
+```
+<img src=https://github.com/trns1997/collision_detect/blob/master/media/tf_tree.png>
